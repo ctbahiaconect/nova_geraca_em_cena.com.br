@@ -1,29 +1,511 @@
+window.NGC_CONFIG = window.NGC_CONFIG || {
+    binId: '6adc0f6fac6210605a4da6c6',
+    masterKey: '$2a$10$B9j5yKhIwDysYmdTVdLh2eYE/2IIcd5inVVdA55qQnzO3Hm5aXkCm',
+    whatsappNumber: 'c',
+    whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.',
+    defaultAdmin: {
+        username: 'admin77382372',
+        password: 'admin127737762263',
+        name: 'Administrador'
+    }
+};
+
+const DB_KEY = 'ngc_jsonbin_db_v1';
+const DEFAULT_DB = {
+    admins: [
+        { username: 'admin77382372', password: 'admin127737762263', name: 'Administrador' }
+    ],
+    purchases: [],
+    settings: {
+        whatsappNumber: '7197070938',
+        whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.'
+    }
+};
+
+function getDbFromStorage() {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_DB));
+
+    try {
+        const parsed = JSON.parse(raw);
+        return {
+            admins: Array.isArray(parsed.admins) ? parsed.admins : DEFAULT_DB.admins,
+            purchases: Array.isArray(parsed.purchases) ? parsed.purchases : [],
+            settings: parsed.settings || DEFAULT_DB.settings
+        };
+    } catch (error) {
+        return JSON.parse(JSON.stringify(DEFAULT_DB));
+    }
+}
+
+async function loadDatabase() {
+    const localDb = getDbFromStorage();
+    const config = window.NGC_CONFIG || {};
+
+    if (!config.binId || !config.masterKey || String(config.binId).includes('SEU_')) {
+        return localDb;
+    }
+
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}/latest`, {
+            method: 'GET',
+            headers: {
+                'X-Master-Key': config.masterKey,
+                'X-Bin-Meta': 'false'
+            }
+        });
+
+        if (!response.ok) throw new Error('JSONBin indisponível');
+
+        const result = await response.json();
+        const remoteDb = result.record || localDb;
+        localStorage.setItem(DB_KEY, JSON.stringify(remoteDb));
+        return remoteDb;
+    } catch (error) {
+        console.warn('JSONBin indisponível, usando localStorage.', error);
+        return localDb;
+    }
+}
+
+async function saveDatabase(db) {
+    const config = window.NGC_CONFIG || {};
+
+    if (!config.binId || !config.masterKey || String(config.binId).includes('SEU_')) {
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        return db;
+    }
+
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': config.masterKey
+            },
+            body: JSON.stringify(db)
+        });
+        if (!response.ok) throw new Error(`JSONBin respondeu ${response.status}`);
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+    } catch (error) {
+        console.warn('Não foi possível sincronizar com o JSONBin.', error);
+        throw new Error('Não foi possível salvar os dados no JSONBin.');
+    }
+
+    return db;
+}
+
+function ensureDefaultAdmin() {
+    const db = getDbFromStorage();
+    if (!db.admins || !db.admins.length) {
+        db.admins = [window.NGC_CONFIG.defaultAdmin];
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+    }
+}
+
+function generateTicketCode() {
+    return `NGC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Data não informada';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[character]);
+}
+
+function setCurrentAdmin(username) {
+    localStorage.setItem('ngc_admin_user', username || '');
+}
+
+function isAdminLoggedIn() {
+    return Boolean(localStorage.getItem('ngc_admin_user'));
+}
+
+function logoutAdmin() {
+    localStorage.removeItem('ngc_admin_user');
+    window.location.href = 'login.html';
+}
+
+async function initLoginPage() {
+    const form = document.getElementById('admin-login-form');
+    if (!form) return;
+
+    ensureDefaultAdmin();
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const message = document.getElementById('login-message');
+        const db = await loadDatabase();
+        const admin = (db.admins || []).find((item) => item.username === username && item.password === password);
+
+        if (!admin) {
+            message.textContent = 'Usuário ou senha inválidos.';
+            message.classList.add('error');
+            return;
+        }
+
+        setCurrentAdmin(admin.username);
+        window.location.href = 'painel.html';
+    });
+}
+
+let adminPurchaseCache = [];
+
+function renderAdminRows(searchTerm = '') {
+    const table = document.getElementById('purchase-table');
+    const emptyState = document.getElementById('purchase-empty');
+    const noResults = document.getElementById('purchase-no-results');
+    const resultCount = document.getElementById('search-result-count');
+    if (!table) return;
+
+    const query = searchTerm.trim().toLocaleLowerCase('pt-BR');
+    const purchases = adminPurchaseCache.filter((purchase) => {
+        const searchable = [purchase.ticketCode, purchase.id, purchase.customerName, purchase.phone]
+            .map((value) => String(value || '').toLocaleLowerCase('pt-BR'));
+        return searchable.some((value) => value.includes(query));
+    });
+
+    if (!adminPurchaseCache.length) {
+        table.innerHTML = '';
+        emptyState.style.display = 'block';
+        noResults.style.display = 'none';
+        resultCount.textContent = '';
+        return;
+    }
+            emptyState.style.display = 'none';
+            noResults.style.display = purchases.length ? 'none' : 'block';
+            resultCount.textContent = `${purchases.length} ingresso${purchases.length === 1 ? '' : 's'} encontrado${purchases.length === 1 ? '' : 's'}.`;
+            if (!purchases.length) {
+                table.innerHTML = '';
+                return;
+            }
+
+            table.innerHTML = purchases.map((purchase) => `
+                <tr>
+                    <td>${escapeHtml(purchase.customerName)}</td>
+                    <td>${escapeHtml(purchase.phone)}</td>
+                    <td>${escapeHtml(purchase.eventName)}</td>
+                    <td>${escapeHtml(purchase.ticketType)}</td>
+                    <td>${escapeHtml(purchase.ticketCode || purchase.id)}</td>
+                    <td><a href="ingresso.html?code=${encodeURIComponent(purchase.ticketCode || '')}" target="_blank" rel="noreferrer">Abrir</a></td>
+                    <td><button type="button" class="admin-receipt" data-receipt-code="${escapeHtml(purchase.ticketCode || purchase.id)}">Baixar PDF</button></td>
+                    <td><button type="button" class="admin-delete" data-ticket-code="${escapeHtml(purchase.ticketCode || purchase.id)}" aria-label="Excluir ingresso de ${escapeHtml(purchase.customerName)}">Excluir</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function renderAdminTable(searchTerm) {
+            const db = await loadDatabase();
+            adminPurchaseCache = Array.isArray(db.purchases) ? db.purchases : [];
+            const search = document.getElementById('purchase-search');
+            renderAdminRows(searchTerm ?? search?.value ?? '');
+        }
+
+        function downloadPurchaseReceipt(purchase) {
+            const PdfDocument = window.jspdf?.jsPDF;
+            if (!PdfDocument) {
+                alert('Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.');
+                return;
+            }
+
+            const pdf = new PdfDocument();
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            pdf.setFillColor(20, 20, 20);
+            pdf.rect(0, 0, pageWidth, 42, 'F');
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(18);
+            pdf.text('NOVA GERACAO EM CENA', 18, 20);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(11);
+            pdf.text('Comprovante de ingresso', 18, 31);
+
+            pdf.setDrawColor(193, 0, 0);
+            pdf.setLineWidth(1.2);
+            pdf.roundedRect(18, 56, pageWidth - 36, 165, 3, 3, 'S');
+            pdf.setTextColor(30, 30, 30);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(16);
+            pdf.text(String(purchase.eventName || 'Evento'), 28, 72, { maxWidth: pageWidth - 56 });
+
+            const fields = [
+                ['Cliente', purchase.customerName],
+                ['Telefone', purchase.phone],
+                ['E-mail', purchase.email || 'Nao informado'],
+                ['Tipo', purchase.ticketType || 'Inteira'],
+                ['Quantidade', purchase.quantity || 1],
+                ['Data', formatDate(purchase.purchaseDate)],
+                ['Status', purchase.status || 'confirmado']
+            ];
+            let y = 91;
+            pdf.setFontSize(11);
+            fields.forEach(([label, value]) => {
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(`${label}:`, 28, y);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(String(value), 65, y, { maxWidth: pageWidth - 93 });
+                y += 16;
+            });
+
+            pdf.setFillColor(248, 245, 238);
+            pdf.roundedRect(28, 194, pageWidth - 56, 17, 2, 2, 'F');
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(12);
+            pdf.setTextColor(120, 0, 0);
+            pdf.text(`ID DO INGRESSO: ${String(purchase.ticketCode || purchase.id || '')}`, 34, 205);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(9);
+            pdf.setTextColor(100, 100, 100);
+            pdf.text('Apresente este comprovante na entrada do evento.', 18, 240);
+
+            const filename = String(purchase.ticketCode || purchase.id || 'ingresso').replace(/[^a-z0-9_-]/gi, '-');
+            pdf.save(`comprovante-${filename}.pdf`);
+        }
+
+        function setAdminTab(tabName) {
+            const isSearch = tabName === 'search';
+            const addTab = document.getElementById('tab-add');
+            const searchTab = document.getElementById('tab-search');
+            const addPanel = document.getElementById('panel-add');
+            const searchPanel = document.getElementById('panel-search');
+
+            addTab.classList.toggle('active', !isSearch);
+            addTab.setAttribute('aria-selected', String(!isSearch));
+            addPanel.hidden = isSearch;
+            searchTab.classList.toggle('active', isSearch);
+            searchTab.setAttribute('aria-selected', String(isSearch));
+            searchPanel.hidden = !isSearch;
+        }
+
+        async function initAdminPage() {
+            if (!isAdminLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const form = document.getElementById('purchase-form');
+            const table = document.getElementById('purchase-table');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            document.getElementById('tab-add').addEventListener('click', () => setAdminTab('add'));
+            document.getElementById('tab-search').addEventListener('click', () => setAdminTab('search'));
+            document.getElementById('purchase-search').addEventListener('input', (event) => renderAdminRows(event.target.value));
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logoutAdmin);
+            }
+
+            if (table) {
+                table.addEventListener('click', async (event) => {
+                    const receiptButton = event.target.closest('[data-receipt-code]');
+                    if (receiptButton) {
+                        const purchase = adminPurchaseCache.find((item) => String(item.ticketCode || item.id) === receiptButton.dataset.receiptCode);
+                        if (purchase) downloadPurchaseReceipt(purchase);
+                        return;
+                    }
+
+                    const button = event.target.closest('[data-ticket-code]');
+                    if (!button) return;
+
+                    const db = await loadDatabase();
+                    db.purchases = Array.isArray(db.purchases) ? db.purchases : [];
+                    const purchaseIndex = db.purchases.findIndex((purchase) => String(purchase.ticketCode || purchase.id) === button.dataset.ticketCode);
+                    if (purchaseIndex < 0) {
+                        await renderAdminTable();
+                        return;
+                    }
+
+                    const purchase = db.purchases[purchaseIndex];
+                    if (!window.confirm(`Excluir o ingresso de ${purchase.customerName}? Esta ação não pode ser desfeita.`)) return;
+
+                    db.purchases.splice(purchaseIndex, 1);
+                    try {
+                        await saveDatabase(db);
+                        await renderAdminTable();
+                        alert('Ingresso excluído com sucesso.');
+                    } catch (error) {
+                        alert(error.message);
+                        await renderAdminTable();
+                    }
+                });
+            }
+
+            if (!form) return;
+
+            const codeField = document.getElementById('ticket-code');
+            codeField.value = generateTicketCode();
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const payload = {
+                    customerName: String(formData.get('customerName') || '').trim(),
+                    phone: String(formData.get('phone') || '').trim(),
+                    email: String(formData.get('email') || '').trim(),
+                    eventName: String(formData.get('eventName') || '').trim(),
+                    ticketType: String(formData.get('ticketType') || 'Inteira'),
+                    quantity: Number(formData.get('quantity') || 1),
+                    purchaseDate: String(formData.get('purchaseDate') || new Date().toISOString()),
+                    ticketCode: String(formData.get('ticketCode') || generateTicketCode()),
+                    status: String(formData.get('status') || 'confirmado')
+                };
+
+                if (!payload.customerName || !payload.phone || !payload.eventName) {
+                    alert('Preencha nome, telefone e evento.');
+                    return;
+                }
+
+                const db = await loadDatabase();
+                db.purchases = Array.isArray(db.purchases) ? db.purchases : [];
+                db.purchases.unshift(payload);
+                try {
+                    await saveDatabase(db);
+                } catch (error) {
+                    alert(error.message);
+                    return;
+                }
+
+                form.reset();
+                codeField.value = generateTicketCode();
+                await renderAdminTable();
+                alert('Ingresso cadastrado com sucesso.');
+            });
+
+            await renderAdminTable();
+        }
+
+async function initPurchasePage() {
+    const link = document.getElementById('whatsapp-link');
+    if (!link) return;
+
+    const db = await loadDatabase();
+    const config = window.NGC_CONFIG || {};
+    const number = db.settings?.whatsappNumber || config.whatsappNumber || '5511999999999';
+    const message = encodeURIComponent(db.settings?.whatsappMessage || config.whatsappMessage || 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.');
+    link.href = `https://wa.me/${number}?text=${message}`;
+}
+
+async function initTicketPage() {
+    const container = document.getElementById('certificate-content');
+    if (!container) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const ticketCode = params.get('code');
+
+    const db = await loadDatabase();
+    const purchase = (db.purchases || []).find((item) => String(item.ticketCode).toUpperCase() === String(ticketCode || '').toUpperCase());
+
+    if (!purchase) {
+        container.innerHTML = `
+            <div class="certificate-empty">
+                <h2>Ingresso não encontrado</h2>
+                <p>Este certificado ainda não foi liberado ou o código informado está incorreto.</p>
+                <a href="index.html" class="btn-principal">Voltar para a home</a>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="certificate-card">
+            <div class="certificate-badge">Certificado de ingresso</div>
+            <h2>${purchase.eventName}</h2>
+            <p class="certificate-name">Cliente: <strong>${purchase.customerName}</strong></p>
+            <div class="certificate-meta">
+                <span><strong>Código:</strong> ${purchase.ticketCode}</span>
+                <span><strong>Tipo:</strong> ${purchase.ticketType}</span>
+                <span><strong>Data:</strong> ${formatDate(purchase.purchaseDate)}</span>
+            </div>
+            <div class="certificate-status">Status: ${purchase.status || 'confirmado'}</div>
+        </div>
+    `;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Menu Mobile Toggle
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.querySelector('.nav-links');
 
-    if(menuToggle) {
+    if (menuToggle && navLinks) {
         menuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('active');
         });
+
+        navLinks.querySelectorAll('a').forEach((link) => {
+            link.addEventListener('click', () => navLinks.classList.remove('active'));
+        });
     }
 
-    // Animação simples de revelar elementos ao rolar a página
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, { threshold: 0.1 });
-
-    const cards = document.querySelectorAll('.post-card');
-    cards.forEach(card => {
-        card.style.opacity = 0;
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'all 0.6s ease-out';
-        observer.observe(card);
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-links a').forEach((link) => {
+        const href = link.getAttribute('href');
+        if (href === currentPage) {
+            link.classList.add('active');
+        }
     });
+
+    const revealItems = document.querySelectorAll('.reveal, .post-card, .feature-item, .doacao-card');
+    if ('IntersectionObserver' in window && revealItems.length) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        revealItems.forEach((item, index) => {
+            item.style.transitionDelay = `${index * 80}ms`;
+            observer.observe(item);
+        });
+    }
+
+    const yearNode = document.getElementById('year');
+    if (yearNode) {
+        yearNode.textContent = new Date().getFullYear();
+    }
+
+    const copyBtn = document.getElementById('copyPixBtn');
+    const pixKey = document.getElementById('pixKey');
+    const feedback = document.getElementById('pixFeedback');
+
+    if (copyBtn && pixKey && feedback) {
+        copyBtn.addEventListener('click', async () => {
+            const keyText = pixKey.innerText.trim();
+            try {
+                await navigator.clipboard.writeText(keyText);
+            } catch (error) {
+                const textArea = document.createElement('textarea');
+                textArea.value = keyText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
+
+            feedback.style.opacity = '1';
+            feedback.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                feedback.style.transform = 'translateY(8px)';
+            }, 2200);
+        });
+    }
+
+    const page = document.body?.dataset?.page;
+    if (page === 'login') initLoginPage();
+    if (page === 'admin') initAdminPage();
+    if (page === 'purchase') initPurchasePage();
+    if (page === 'ticket') initTicketPage();
 });

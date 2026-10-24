@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doação | Nova Geração em Cena</title>
-    <!-- Fontes do Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-    <!-- Ícones (FontAwesome) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-
-    <!-- HEADER (idêntico ao index) -->
+<body class="doacao-page">
     <header>
         <div class="nav-container">
             <div class="logo">
@@ -21,66 +17,49 @@
                     <h1>N.G.C</h1>
                 </div>
             </div>
-            
-            <div class="menu-toggle"><i class="fas fa-bars"></i></div>
 
-            <nav class="nav-links">
+            <button class="menu-toggle" aria-label="Abrir menu" type="button">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="nav-links" aria-label="Menu principal">
                 <a href="index.html">Home</a>
+                <a href="doacao.html" class="active">Faça uma doação</a>
+                <a href="sobre/sobre.html">Sobre Nós</a>
             </nav>
 
             <div class="social-header">
-                <a href="https://instagram.com" target="_blank" class="btn-social"><i class="fab fa-instagram"></i> Instagram</a>
-                <a href="https://youtube.com" target="_blank" class="btn-social"><i class="fab fa-youtube"></i> YouTube</a>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" class="btn-social"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="https://youtube.com" target="_blank" rel="noreferrer" class="btn-social"><i class="fab fa-youtube"></i> YouTube</a>
             </div>
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL - DOAÇÃO -->
     <main class="doacao-main">
         <section class="doacao-section">
             <h1 class="doacao-title">Faça uma doação</h1>
             <p class="doacao-subtitle">Sua contribuição mantém a arte viva e transforma vidas.</p>
 
-            <div class="doacao-grid">
-                <!-- QR CODE CARD -->
-                <div class="doacao-card">
-                    <div class="doacao-card-icon">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <h2>QR Code Pix</h2>
-                    <p>Escaneie com o aplicativo do seu banco para doar qualquer valor.</p>
-                    <div class="qrcode-container">
-                        <!-- QR Code estático de exemplo (substitua pela sua imagem real) -->
-                        <img src="img/qrcode-pix.png" alt="QR Code Pix para doação" class="qrcode-img">
-                        <!-- Caso queira gerar um QR code via API, substitua a img acima por: 
-                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126580014BR.GOV.BCB.PIX0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540510.005802BR5915Nova Geracao6008Sao Paulo62070503***6304ABCD" alt="QR Code Pix"> 
-                        -->
-                    </div>
-                    <p class="qrcode-hint"><i class="fas fa-camera"></i> Abra o app do banco e escaneie</p>
-                </div>
-
-                <!-- CHAVE PIX CARD -->
-                <div class="doacao-card">
+                <div class="doacao-card reveal">
                     <div class="doacao-card-icon">
                         <i class="fas fa-key"></i>
                     </div>
                     <h2>Chave Pix</h2>
                     <p>Use a chave abaixo para transferir via Pix.</p>
                     <div class="pix-key-box">
-                        <span id="pixKey">chave pix não definida</span>
-                        <button class="copy-btn" id="copyPixBtn" title="Copiar chave Pix">
+                        <span id="pixKey">não definida</span>
+                        <button class="copy-btn" id="copyPixBtn" title="Copiar chave Pix" type="button">
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>
                     <p class="pix-instructions">
-                        <i class="fas fa-info-circle"></i> 
+                        <i class="fas fa-info-circle"></i>
                         Abra o app do banco, escolha Pix, cole a chave e informe o valor.
                     </p>
-                    <div class="pix-feedback" id="pixFeedback">Chave copiada!</div>
+                    <div class="pix-feedback" id="pixFeedback" aria-live="polite">Chave copiada!</div>
                 </div>
             </div>
 
-            <!-- MENSAGEM DE AGRADECIMENTO -->
             <div class="doacao-agradecimento">
                 <i class="fas fa-heart"></i>
                 <p>Cada doação, independente do valor, faz a diferença. Obrigado por apoiar a cultura!</p>
@@ -88,396 +67,10 @@
         </section>
     </main>
 
+    <footer>
+        <p>© <span id="year"></span> Nova Geração em Cena</p>
+    </footer>
+
     <script src="script.js"></script>
-    <!-- Script adicional para copiar chave Pix e manter a consistência de animações -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Copiar chave Pix
-            const copyBtn = document.getElementById('copyPixBtn');
-            const pixKey = document.getElementById('pixKey');
-            const feedback = document.getElementById('pixFeedback');
-
-            if (copyBtn && pixKey) {
-                copyBtn.addEventListener('click', async () => {
-                    const keyText = pixKey.innerText;
-                    try {
-                        await navigator.clipboard.writeText(keyText);
-                        feedback.style.opacity = '1';
-                        feedback.style.transform = 'translateY(0)';
-                        setTimeout(() => {
-                            feedback.style.opacity = '0';
-                            feedback.style.transform = 'translateY(10px)';
-                        }, 2000);
-                    } catch (err) {
-                        // fallback para navegadores antigos
-                        const textArea = document.createElement('textarea');
-                        textArea.value = keyText;
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(textArea);
-                        feedback.style.opacity = '1';
-                        feedback.style.transform = 'translateY(0)';
-                        setTimeout(() => {
-                            feedback.style.opacity = '0';
-                            feedback.style.transform = 'translateY(10px)';
-                        }, 2000);
-                    }
-                });
-            }
-
-            // Animação de revelação para os cards de doação
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            const cards = document.querySelectorAll('.doacao-card');
-            cards.forEach(card => {
-                card.style.opacity = 0;
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'all 0.6s ease-out';
-                observer.observe(card);
-            });
-        });
-    </script>
-
-    <!-- ESTILOS ESPECÍFICOS PARA A PÁGINA DE DOAÇÃO (mantendo a identidade) -->
-    <style>
-        /* Reutiliza variáveis do style.css original, mas garante que os estilos da doação fiquem isolados */
-        .doacao-main {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 20px 60px; /* compensa header fixo */
-            background: linear-gradient(145deg, #0a0a0a 0%, #111111 100%);
-        }
-
-        .doacao-section {
-            max-width: 1000px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .doacao-title {
-            font-family: var(--fonte-titulo);
-            font-size: 3rem;
-            color: var(--cor-texto);
-            margin-bottom: 10px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .doacao-title::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: var(--cor-primaria);
-            margin: 15px auto 0;
-            border-radius: 2px;
-        }
-
-        .doacao-subtitle {
-            font-size: 1.2rem;
-            color: #ccc;
-            margin-bottom: 50px;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        .doacao-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .doacao-card {
-            background: #151515;
-            border-radius: 12px;
-            padding: 30px 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #2a2a2a;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .doacao-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--cor-primaria);
-            box-shadow: 0 15px 30px rgba(193, 0, 0, 0.15);
-        }
-
-        .doacao-card-icon {
-            font-size: 2.8rem;
-            color: var(--cor-primaria);
-            margin-bottom: 15px;
-            background: rgba(193, 0, 0, 0.1);
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.3s;
-        }
-
-        .doacao-card:hover .doacao-card-icon {
-            background: rgba(193, 0, 0, 0.2);
-        }
-
-        .doacao-card h2 {
-            font-family: var(--fonte-titulo);
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: var(--cor-texto);
-        }
-
-        .doacao-card p {
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        /* QR Code */
-        .qrcode-container {
-            background: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            display: inline-block;
-            margin: 10px 0 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
-        }
-
-        .doacao-card:hover .qrcode-container {
-            transform: scale(1.02);
-        }
-
-        .qrcode-img {
-            width: 180px;
-            height: 180px;
-            display: block;
-            object-fit: contain;
-        }
-
-        .qrcode-hint {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 5px;
-        }
-
-        .qrcode-hint i {
-            color: var(--cor-destaque);
-            margin-right: 5px;
-        }
-
-        /* Chave Pix */
-        .pix-key-box {
-            display: flex;
-            align-items: center;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 5px 5px 5px 15px;
-            width: 100%;
-            max-width: 320px;
-            margin: 10px auto 15px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .pix-key-box:hover {
-            border-color: var(--cor-primaria);
-            box-shadow: 0 0 10px rgba(193, 0, 0, 0.2);
-        }
-
-        .pix-key-box span {
-            flex: 1;
-            font-size: 0.95rem;
-            color: #eee;
-            font-weight: 400;
-            word-break: break-all;
-            text-align: left;
-            padding-right: 5px;
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: 0.3px;
-        }
-
-        .copy-btn {
-            background: var(--cor-primaria);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-
-        .copy-btn:hover {
-            background: #a00000;
-            transform: scale(1.05);
-        }
-
-        .copy-btn:active {
-            transform: scale(0.95);
-        }
-
-        .pix-instructions {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 10px;
-            text-align: center;
-            max-width: 320px;
-        }
-
-        .pix-instructions i {
-            color: var(--cor-destaque);
-            margin-right: 5px;
-        }
-
-        /* Feedback copiar */
-        .pix-feedback {
-            color: #4caf50;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-top: 8px;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .pix-feedback::before {
-            content: '✓';
-            font-weight: bold;
-            color: #4caf50;
-        }
-
-        /* Agradecimento */
-        .doacao-agradecimento {
-            margin-top: 40px;
-            padding: 25px 20px;
-            background: linear-gradient(90deg, rgba(193, 0, 0, 0.1), rgba(212, 175, 55, 0.05));
-            border-radius: 12px;
-            border-left: 5px solid var(--cor-primaria);
-            border-right: 5px solid var(--cor-destaque);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .doacao-agradecimento i {
-            font-size: 2.2rem;
-            color: var(--cor-primaria);
-            animation: pulse 1.8s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .doacao-agradecimento p {
-            font-size: 1.1rem;
-            color: #ddd;
-            font-style: italic;
-            margin: 0;
-            max-width: 600px;
-        }
-
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .doacao-main {
-                padding: 90px 15px 40px;
-            }
-
-            .doacao-title {
-                font-size: 2.2rem;
-            }
-
-            .doacao-subtitle {
-                font-size: 1rem;
-                margin-bottom: 30px;
-            }
-
-            .doacao-grid {
-                gap: 20px;
-            }
-
-            .doacao-card {
-                padding: 25px 15px;
-            }
-
-            .qrcode-img {
-                width: 150px;
-                height: 150px;
-            }
-
-            .pix-key-box {
-                max-width: 100%;
-            }
-
-            .doacao-agradecimento {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-
-            .doacao-agradecimento p {
-                font-size: 1rem;
-            }
-
-            /* Ajuste no menu mobile (já existente no style.css) */
-            .nav-links.active {
-                display: flex;
-            }
-
-            /* Esconde redes sociais no header em mobile, como no original */
-            .social-header {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .doacao-title {
-                font-size: 1.8rem;
-            }
-
-            .doacao-card h2 {
-                font-size: 1.5rem;
-            }
-
-            .qrcode-img {
-                width: 130px;
-                height: 130px;
-            }
-
-            .pix-key-box span {
-                font-size: 0.8rem;
-            }
-        }
-    </style>
 </body>
 </html>
