@@ -4,8 +4,8 @@ window.NGC_CONFIG = window.NGC_CONFIG || {
     whatsappNumber: 'c',
     whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.',
     defaultAdmin: {
-        username: 'admin77382372',
-        password: 'admin127737762263',
+        username: 'admin',
+        password: 'admin123',
         name: 'Administrador'
     }
 };
@@ -13,11 +13,11 @@ window.NGC_CONFIG = window.NGC_CONFIG || {
 const DB_KEY = 'ngc_jsonbin_db_v1';
 const DEFAULT_DB = {
     admins: [
-        { username: 'admin77382372', password: 'admin127737762263', name: 'Administrador' }
+        { username: 'admin', password: 'admin123', name: 'Administrador' }
     ],
     purchases: [],
     settings: {
-        whatsappNumber: '7197070938',
+        whatsappNumber: '71997070938',
         whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.'
     }
 };
@@ -207,8 +207,69 @@ function renderAdminRows(searchTerm = '') {
         async function renderAdminTable(searchTerm) {
             const db = await loadDatabase();
             adminPurchaseCache = Array.isArray(db.purchases) ? db.purchases : [];
+            updateRaffleEvents();
             const search = document.getElementById('purchase-search');
             renderAdminRows(searchTerm ?? search?.value ?? '');
+        }
+
+        function updateRaffleEvents() {
+            const eventSelect = document.getElementById('raffle-event');
+            if (!eventSelect) return;
+
+            const selectedEvent = eventSelect.value;
+            const events = [...new Set(adminPurchaseCache
+                .map((purchase) => String(purchase.eventName || '').trim())
+                .filter(Boolean))]
+                .sort((first, second) => first.localeCompare(second, 'pt-BR'));
+
+            eventSelect.innerHTML = '<option value="">Todos os eventos</option>' + events
+                .map((eventName) => `<option value="${escapeHtml(eventName)}">${escapeHtml(eventName)}</option>`)
+                .join('');
+
+            if (events.includes(selectedEvent)) eventSelect.value = selectedEvent;
+        }
+
+        function drawRaffleWinner() {
+            const eventSelect = document.getElementById('raffle-event');
+            const result = document.getElementById('raffle-result');
+            const selectedEvent = eventSelect?.value || '';
+            const eligiblePurchases = adminPurchaseCache
+                .filter((purchase) => (purchase.status || 'confirmado') === 'confirmado'
+                    && (!selectedEvent || String(purchase.eventName || '').trim() === selectedEvent))
+                .map((purchase) => {
+                    const quantity = Number(purchase.quantity);
+                    return {
+                        purchase,
+                        quantity: Number.isSafeInteger(quantity) && quantity > 0 ? quantity : 1
+                    };
+                });
+            const totalEntries = eligiblePurchases.reduce((total, entry) => total + entry.quantity, 0);
+
+            if (!totalEntries) {
+                result.textContent = 'Não há ingressos confirmados para este sorteio.';
+                result.classList.add('raffle-result-empty');
+                return;
+            }
+
+            const winningNumber = Math.floor(Math.random() * totalEntries) + 1;
+            let remainingNumber = winningNumber;
+            let winner;
+
+            for (const entry of eligiblePurchases) {
+                if (remainingNumber <= entry.quantity) {
+                    winner = entry.purchase;
+                    break;
+                }
+                remainingNumber -= entry.quantity;
+            }
+
+            result.classList.remove('raffle-result-empty');
+            result.innerHTML = `
+                <p class="raffle-number">Número sorteado <strong>${winningNumber}</strong> de ${totalEntries}</p>
+                <p class="raffle-winner-label">Cliente sorteado</p>
+                <h3>${escapeHtml(winner.customerName || 'Cliente sem nome')}</h3>
+                <p>${escapeHtml(winner.eventName || 'Evento')} · ${escapeHtml(winner.ticketType || 'Ingresso')}</p>
+            `;
         }
 
         function downloadPurchaseReceipt(purchase) {
@@ -274,17 +335,23 @@ function renderAdminRows(searchTerm = '') {
 
         function setAdminTab(tabName) {
             const isSearch = tabName === 'search';
+            const isRaffle = tabName === 'raffle';
             const addTab = document.getElementById('tab-add');
             const searchTab = document.getElementById('tab-search');
+            const raffleTab = document.getElementById('tab-raffle');
             const addPanel = document.getElementById('panel-add');
             const searchPanel = document.getElementById('panel-search');
+            const rafflePanel = document.getElementById('panel-raffle');
 
-            addTab.classList.toggle('active', !isSearch);
-            addTab.setAttribute('aria-selected', String(!isSearch));
-            addPanel.hidden = isSearch;
+            addTab.classList.toggle('active', !isSearch && !isRaffle);
+            addTab.setAttribute('aria-selected', String(!isSearch && !isRaffle));
+            addPanel.hidden = isSearch || isRaffle;
             searchTab.classList.toggle('active', isSearch);
             searchTab.setAttribute('aria-selected', String(isSearch));
             searchPanel.hidden = !isSearch;
+            raffleTab.classList.toggle('active', isRaffle);
+            raffleTab.setAttribute('aria-selected', String(isRaffle));
+            rafflePanel.hidden = !isRaffle;
         }
 
         async function initAdminPage() {
@@ -299,6 +366,8 @@ function renderAdminRows(searchTerm = '') {
 
             document.getElementById('tab-add').addEventListener('click', () => setAdminTab('add'));
             document.getElementById('tab-search').addEventListener('click', () => setAdminTab('search'));
+            document.getElementById('tab-raffle').addEventListener('click', () => setAdminTab('raffle'));
+            document.getElementById('draw-winner-btn').addEventListener('click', drawRaffleWinner);
             document.getElementById('purchase-search').addEventListener('input', (event) => renderAdminRows(event.target.value));
 
             if (logoutBtn) {

@@ -35,6 +35,7 @@
         <div class="admin-tabs" role="tablist" aria-label="Seções administrativas">
             <button type="button" class="admin-tab active" id="tab-add" role="tab" aria-controls="panel-add" aria-selected="true">Cadastrar ingresso</button>
             <button type="button" class="admin-tab" id="tab-search" role="tab" aria-controls="panel-search" aria-selected="false">Pesquisar ingressos</button>
+            <button type="button" class="admin-tab" id="tab-raffle" role="tab" aria-controls="panel-raffle" aria-selected="false">Sorteio</button>
         </div>
 
         <section class="admin-panel" id="panel-add" role="tabpanel" aria-labelledby="tab-add">
@@ -125,6 +126,25 @@
                     </thead>
                     <tbody id="purchase-table"></tbody>
                 </table>
+            </div>
+        </section>
+
+        <section class="admin-panel" id="panel-raffle" role="tabpanel" aria-labelledby="tab-raffle" hidden>
+            <h2>Sorteio de clientes</h2>
+            <p>Cada ingresso confirmado vale uma chance. Selecione um evento ou participe com todos.</p>
+            <div class="raffle-controls">
+                <div class="form-field">
+                    <label for="raffle-event">Evento</label>
+                    <select id="raffle-event">
+                        <option value="">Todos os eventos</option>
+                    </select>
+                </div>
+                <button type="button" class="admin-action" id="draw-winner-btn">
+                    <i class="fas fa-dice" aria-hidden="true"></i> Sortear cliente
+                </button>
+            </div>
+            <div class="raffle-result" id="raffle-result" aria-live="polite">
+                Selecione um evento e inicie o sorteio.
             </div>
         </section>
     </main>

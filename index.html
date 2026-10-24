@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Conheça a Nova Geração em Cena: teatro, oficinas e histórias que aproximam pessoas.">
+    <meta name="theme-color" content="#11100f">
     <title>Nova Geração em Cena | Teatro</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="home-page">
     <header>
         <div class="nav-container">
             <div class="logo">
@@ -35,18 +37,23 @@
         </div>
     </header>
 
-    <section class="hero">
+    <section class="hero" id="inicio">
         <div class="hero-content">
-            <h1>NOVA GERAÇÃO <span>EM CENA</span></h1>
-            <p>A arte de emocionar, transformar e contar histórias. Venha fazer parte do nosso espetáculo.</p>
+            <p class="hero-kicker"><span></span> Teatro, formação e comunidade</p>
+            <h1>Histórias que <span>merecem o palco.</span></h1>
+            <p>Um coletivo que transforma vivências em teatro e abre espaço para novas vozes.</p>
             <div class="hero-actions">
-                <a href="https://www.instagram.com/novageracao.encena?rpxt=MTEwY3NlcHQ5cWxocQ==" class="btn-principal" target="_blank" rel="noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
-                <a href="compra.html" class="btn-secundario">Comprar ingresso</a>
+                <a href="compra.html" class="btn-principal"><i class="fas fa-ticket-alt" aria-hidden="true"></i> Ver ingressos</a>
+                <a href="https://www.instagram.com/novageracao.encena?rpxt=MTEwY3NlcHQ5cWxocQ==" class="btn-secundario" target="_blank" rel="noreferrer">Acompanhe o grupo <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             </div>
         </div>
+        <figure class="hero-visual">
+            <img src="css/img/background.png" alt="Integrante da Nova Geração em Cena durante uma apresentação">
+            <figcaption>Uma história de cada vez. Um palco para todo mundo.</figcaption>
+        </figure>
     </section>
 
-    <section class="feature-strip">
+    <section class="feature-strip" aria-label="O que fazemos">
         <article class="feature-item reveal">
             <i class="fas fa-theater-masks"></i>
             <h3>Espetáculos</h3>
@@ -64,8 +71,12 @@
         </article>
     </section>
 
-    <section class="section-container">
-        <h2 class="section-title">Mais do Grupo</h2>
+    <section class="section-container" id="universo">
+        <div class="section-heading">
+            <p class="section-eyebrow">Dentro e fora do palco</p>
+            <h2 class="section-title">O teatro acontece em muitos lugares.</h2>
+            <p class="section-intro">Do primeiro exercício ao encontro com o público, cada etapa também faz parte da história.</p>
+        </div>
 
         <div class="grid-posts">
             <article class="post-card reveal">
