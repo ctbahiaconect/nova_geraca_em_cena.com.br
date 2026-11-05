@@ -4,8 +4,8 @@ window.NGC_CONFIG = window.NGC_CONFIG || {
     whatsappNumber: '71981547408',
     whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.',
     defaultAdmin: {
-        username: 'dhsh372739298',
-        password: 'pass##$@1243243234',
+        username: 'admin',
+        password: 'admin123',
         name: 'Administrador'
     }
 };
@@ -13,7 +13,7 @@ window.NGC_CONFIG = window.NGC_CONFIG || {
 const DB_KEY = 'ngc_jsonbin_db_v1';
 const DEFAULT_DB = {
     admins: [
-        { username: 'dhsh372739298', password: 'pass##$@1243243234', name: 'Administrador' }
+        { username: 'admin', password: 'admin123', name: 'Administrador' }
     ],
     purchases: [],
     settings: {
