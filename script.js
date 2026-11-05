@@ -1,7 +1,7 @@
 window.NGC_CONFIG = window.NGC_CONFIG || {
     binId: '6aeca593ac6210605a6fa81f',
     masterKey: '$2a$10$B9j5yKhIwDysYmdTVdLh2eYE/2IIcd5inVVdA55qQnzO3Hm5aXkCm',
-    whatsappNumber: 'c',
+    whatsappNumber: '71981547408',
     whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.',
     defaultAdmin: {
         username: 'dhsh372739298',
