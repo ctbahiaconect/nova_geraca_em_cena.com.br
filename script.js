@@ -4,17 +4,15 @@ window.NGC_CONFIG = window.NGC_CONFIG || {
     whatsappNumber: '71981547408',
     whatsappMessage: 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.',
     defaultAdmin: {
-        username: 'admin',
-        password: 'admin123',
+        username: 'user83809q8wed',
+        password: 'ad027398729',
         name: 'Administrador'
     }
 };
 
 const DB_KEY = 'ngc_jsonbin_db_v1';
 const DEFAULT_DB = {
-    admins: [
-        { username: 'admin', password: 'admin123', name: 'Administrador' }
-    ],
+    admins: [window.NGC_CONFIG.defaultAdmin],
     purchases: [],
     settings: {
         whatsappNumber: '71981547408',
@@ -22,19 +20,36 @@ const DEFAULT_DB = {
     }
 };
 
+function normalizeDatabase(db) {
+    const config = window.NGC_CONFIG || {};
+    const defaultAdmin = config.defaultAdmin;
+    const admins = Array.isArray(db?.admins) && db.admins.length
+        ? db.admins.map((admin) => (
+            admin.username === 'admin' && admin.password === 'admin123'
+                ? { ...admin, ...defaultAdmin }
+                : admin
+        ))
+        : [defaultAdmin];
+
+    return {
+        admins,
+        purchases: Array.isArray(db?.purchases) ? db.purchases : [],
+        settings: {
+            ...DEFAULT_DB.settings,
+            ...(db?.settings || {}),
+            whatsappNumber: config.whatsappNumber || DEFAULT_DB.settings.whatsappNumber
+        }
+    };
+}
+
 function getDbFromStorage() {
     const raw = localStorage.getItem(DB_KEY);
-    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_DB));
+    if (!raw) return normalizeDatabase(DEFAULT_DB);
 
     try {
-        const parsed = JSON.parse(raw);
-        return {
-            admins: Array.isArray(parsed.admins) ? parsed.admins : DEFAULT_DB.admins,
-            purchases: Array.isArray(parsed.purchases) ? parsed.purchases : [],
-            settings: parsed.settings || DEFAULT_DB.settings
-        };
+        return normalizeDatabase(JSON.parse(raw));
     } catch (error) {
-        return JSON.parse(JSON.stringify(DEFAULT_DB));
+        return normalizeDatabase(DEFAULT_DB);
     }
 }
 
@@ -58,7 +73,7 @@ async function loadDatabase() {
         if (!response.ok) throw new Error('JSONBin indisponível');
 
         const result = await response.json();
-        const remoteDb = result.record || localDb;
+        const remoteDb = normalizeDatabase(result.record || localDb);
         localStorage.setItem(DB_KEY, JSON.stringify(remoteDb));
         return remoteDb;
     } catch (error) {
@@ -460,7 +475,7 @@ async function initPurchasePage() {
 
     const db = await loadDatabase();
     const config = window.NGC_CONFIG || {};
-    const number = db.settings?.whatsappNumber || config.whatsappNumber || '5511999999999';
+    const number = config.whatsappNumber || db.settings?.whatsappNumber || '5511999999999';
     const message = encodeURIComponent(db.settings?.whatsappMessage || config.whatsappMessage || 'Olá! Gostaria de comprar um ingresso para o próximo espetáculo.');
     link.href = `https://wa.me/${number}?text=${message}`;
 }
@@ -506,12 +521,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelector('.nav-links');
 
     if (menuToggle && navLinks) {
+        const menuIcon = menuToggle.querySelector('i');
+        const closeMenu = () => {
+            navLinks.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.setAttribute('aria-label', 'Abrir menu');
+            menuIcon?.classList.replace('fa-xmark', 'fa-bars');
+        };
+
         menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+            const isOpen = navLinks.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+            menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+            if (menuIcon) {
+                menuIcon.classList.toggle('fa-bars', !isOpen);
+                menuIcon.classList.toggle('fa-xmark', isOpen);
+            }
         });
 
         navLinks.querySelectorAll('a').forEach((link) => {
-            link.addEventListener('click', () => navLinks.classList.remove('active'));
+            link.addEventListener('click', closeMenu);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') closeMenu();
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!navLinks.contains(event.target) && !menuToggle.contains(event.target)) closeMenu();
         });
     }
 
@@ -534,9 +571,40 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, { threshold: 0.15 });
 
-        revealItems.forEach((item, index) => {
-            item.style.transitionDelay = `${index * 80}ms`;
-            observer.observe(item);
+        revealItems.forEach((item) => observer.observe(item));
+    } else {
+        revealItems.forEach((item) => item.classList.add('visible'));
+    }
+
+    const progressBar = document.getElementById('scroll-progress-bar');
+    const backToTop = document.querySelector('.back-to-top');
+    if (progressBar || backToTop) {
+        let scrollUpdateScheduled = false;
+        const updateScrollControls = () => {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollProgress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+
+            if (progressBar) {
+                progressBar.style.width = `${Math.min(scrollProgress * 100, 100)}%`;
+            }
+            if (backToTop) {
+                backToTop.classList.toggle('visible', window.scrollY > 500);
+            }
+            scrollUpdateScheduled = false;
+        };
+
+        window.addEventListener('scroll', () => {
+            if (scrollUpdateScheduled) return;
+            scrollUpdateScheduled = true;
+            window.requestAnimationFrame(updateScrollControls);
+        }, { passive: true });
+
+        updateScrollControls();
+    }
+
+    if (backToTop) {
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 

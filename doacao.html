@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="doacao-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header>
         <div class="nav-container">
             <div class="logo">
@@ -18,35 +19,34 @@
                 </div>
             </div>
 
-            <button class="menu-toggle" aria-label="Abrir menu" type="button">
-                <i class="fas fa-bars"></i>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-principal" type="button">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
 
-            <nav class="nav-links" aria-label="Menu principal">
-                <a href="index.html">Home</a>
-                <a href="doacao.html" class="active">Faça uma doação</a>
-                <a href="sobre/sobre.html">Sobre Nós</a>
+            <nav class="nav-links" id="menu-principal" aria-label="Menu principal">
+                <a href="index.html">Início</a>
+                <a href="index.html#sobre">O coletivo</a>
+                <a href="sobre/sobre.html">Nossa história</a>
+                <a href="doacao.html" class="active">Apoie</a>
             </nav>
 
-            <div class="social-header">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" class="btn-social"><i class="fab fa-instagram"></i> Instagram</a>
-                <a href="https://youtube.com" target="_blank" rel="noreferrer" class="btn-social"><i class="fab fa-youtube"></i> YouTube</a>
-            </div>
+            <a href="compra.html" class="header-cta"><i class="fas fa-ticket-alt" aria-hidden="true"></i> Ingressos</a>
         </div>
     </header>
 
-    <main class="doacao-main">
+    <main class="doacao-main" id="conteudo">
         <section class="doacao-section">
-            <h1 class="doacao-title">Faça uma doação</h1>
-            <p class="doacao-subtitle">Sua contribuição mantém a arte viva e transforma vidas.</p>
+            <p class="section-eyebrow">Cultura se faz em conjunto</p>
+            <h1 class="doacao-title">Apoie a Nova Geração em Cena</h1>
+            <p class="doacao-subtitle">Sua contribuição ajuda a manter os projetos, as oficinas e os encontros do coletivo.</p>
 
             <div class="doacao-grid">
                 <div class="doacao-card reveal">
                     <div class="doacao-card-icon">
                         <i class="fas fa-key"></i>
                     </div>
-                    <h2>Chave Pix</h2>
-                    <p>Use a chave abaixo para transferir via Pix.</p>
+                    <h2>Contribua via Pix</h2>
+                    <p>Copie a chave e escolha o valor que fizer sentido para você no aplicativo do seu banco.</p>
                     <div class="pix-key-box">
                         <span id="pixKey">contato.novageracaoemcena@gmail.com</span>         <button class="copy-btn" id="copyPixBtn" title="Copiar chave Pix" aria-label="Copiar chave Pix" type="button">
                             <i class="fas fa-copy"></i>
@@ -54,7 +54,7 @@
                     </div>
                     <p class="pix-instructions">
                         <i class="fas fa-info-circle"></i>
-                        Abra o app do banco, escolha Pix, cole a chave e informe o valor.
+                        No aplicativo do banco, escolha Pix, use a chave como destinatário e confirme os dados antes de concluir.
                     </p>
                     <div class="pix-feedback" id="pixFeedback" aria-live="polite">Chave copiada!</div>
                 </div>
@@ -62,13 +62,13 @@
 
             <div class="doacao-agradecimento">
                 <i class="fas fa-heart"></i>
-                <p>Cada doação, independente do valor, faz a diferença. Obrigado por apoiar a cultura!</p>
+                <p>Contribuições são voluntárias. Obrigado por fortalecer a produção cultural independente!</p>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>© <span id="year"></span> Nova Geração em Cena</p>
+        <p>© <span id="year"></span> Nova Geração em Cena · <a href="index.html">Voltar ao início</a></p>
     </footer>
 
     <script src="script.js"></script>

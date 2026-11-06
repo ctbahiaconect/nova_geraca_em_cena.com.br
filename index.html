@@ -3,112 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Conheça a Nova Geração em Cena: teatro, oficinas e histórias que aproximam pessoas.">
+    <meta name="description" content="Nova Geração em Cena: teatro, formação artística e encontros que dão palco a novas vozes. Conheça o coletivo e acompanhe a programação.">
     <meta name="theme-color" content="#11100f">
-    <title>Nova Geração em Cena | Teatro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <meta property="og:title" content="Nova Geração em Cena | Histórias que merecem o palco">
+    <meta property="og:description" content="Um coletivo que transforma vivências em teatro e abre espaço para novas vozes.">
+    <meta property="og:type" content="website">
+    <title>Nova Geração em Cena | Teatro, formação e comunidade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="home-page">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+
     <header>
         <div class="nav-container">
-            <div class="logo">
-                <img src="css/img/soon.png" alt="Nova Geração em Cena Logo">
-                <div class="logo-texto">
-                    <h1>N.G.C</h1>
-                </div>
-            </div>
+            <a class="logo" href="index.html" aria-label="Nova Geração em Cena, página inicial">
+                <img src="css/img/soon.png" alt="">
+                <span class="logo-texto"><strong>N.G.C</strong><small>Nova Geração em Cena</small></span>
+            </a>
 
-            <button class="menu-toggle" aria-label="Abrir menu" type="button">
-                <i class="fas fa-bars"></i>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-principal" type="button">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
 
-            <nav class="nav-links" aria-label="Menu principal">
-                <a href="index.html" class="active">Home</a>
-                <a href="doacao.html">Faça uma doação</a>
-                <a href="sobre/sobre.html">Sobre Nós</a>
+            <nav class="nav-links" id="menu-principal" aria-label="Menu principal">
+                <a href="#inicio" class="active">Início</a>
+                <a href="#sobre">O coletivo</a>
+                <a href="#trabalhos">No palco</a>
+                <a href="sobre/sobre.html">Nossa história</a>
+                <a href="doacao.html">Apoie</a>
             </nav>
 
-            <div class="social-header">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" class="btn-social"><i class="fab fa-instagram"></i> Instagram</a>
-                <a href="https://youtube.com" target="_blank" rel="noreferrer" class="btn-social"><i class="fab fa-youtube"></i> YouTube</a>
-            </div>
+            <a href="compra.html" class="header-cta"><i class="fas fa-ticket-alt" aria-hidden="true"></i> Ingressos</a>
         </div>
     </header>
 
-    <section class="hero" id="inicio">
-        <div class="hero-content">
-            <p class="hero-kicker"><span></span> Teatro, formação e comunidade</p>
-            <h1>Histórias que <span>merecem o palco.</span></h1>
-            <p>Um coletivo que transforma vivências em teatro e abre espaço para novas vozes.</p>
-            <div class="hero-actions">
-                <a href="compra.html" class="btn-principal"><i class="fas fa-ticket-alt" aria-hidden="true"></i> Ver ingressos</a>
-                <a href="https://www.instagram.com/novageracao.encena?rpxt=MTEwY3NlcHQ5cWxocQ==" class="btn-secundario" target="_blank" rel="noreferrer">Acompanhe o grupo <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+    <main id="conteudo">
+        <section class="hero" id="inicio">
+            <div class="hero-content">
+                <p class="hero-kicker"><span></span> Teatro · Formação · Comunidade</p>
+                <h1>Histórias que <span>merecem o palco.</span></h1>
+                <p>Somos um coletivo que transforma vivências em teatro e abre espaço para novas vozes, encontros e possibilidades.</p>
+                <div class="hero-actions">
+                    <a href="compra.html" class="btn-principal"><i class="fas fa-ticket-alt" aria-hidden="true"></i> Ver programação</a>
+                    <a href="#sobre" class="btn-secundario">Conheça o coletivo <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
+                </div>
+                <div class="hero-note"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Arte feita para e com a comunidade</div>
             </div>
-        </div>
-        <figure class="hero-visual">
-            <img src="css/img/background.png" alt="Integrante da Nova Geração em Cena durante uma apresentação">
-            <figcaption>Uma história de cada vez. Um palco para todo mundo.</figcaption>
-        </figure>
-    </section>
+            <figure class="hero-visual">
+                <img src="css/img/background.png" alt="Artista da Nova Geração em Cena no palco">
+                <figcaption><span>Uma história de cada vez.</span><span>Um palco para todo mundo.</span></figcaption>
+            </figure>
+            <a class="hero-scroll" href="#sobre" aria-label="Rolar para conhecer o coletivo"><span></span> Role para descobrir</a>
+        </section>
 
-    <section class="feature-strip" aria-label="O que fazemos">
-        <article class="feature-item reveal">
-            <i class="fas fa-theater-masks"></i>
-            <h3>Espetáculos</h3>
-            <p>Produções que unem emoção, técnica e identidade cultural.</p>
-        </article>
-        <article class="feature-item reveal">
-            <i class="fas fa-chalkboard-teacher"></i>
-            <h3>Oficinas</h3>
-            <p>Formação e despertar de novos talentos para o palco.</p>
-        </article>
-        <article class="feature-item reveal">
-            <i class="fas fa-hands-helping"></i>
-            <h3>Comunidade</h3>
-            <p>Arte acessível e inspiradora para todos os públicos.</p>
-        </article>
-    </section>
-
-    <section class="section-container" id="universo">
-        <div class="section-heading">
-            <p class="section-eyebrow">Dentro e fora do palco</p>
-            <h2 class="section-title">O teatro acontece em muitos lugares.</h2>
-            <p class="section-intro">Do primeiro exercício ao encontro com o público, cada etapa também faz parte da história.</p>
-        </div>
-
-        <div class="grid-posts">
-            <article class="post-card reveal">
-                <img src="css/img/post_2.png" alt="Oficina de Teatro" class="post-img">
-                <div class="post-info">
-                    <h3>Oficina de Teatro</h3>
-                    <p>Experiências práticas que ajudam jovens e artistas a encontrar sua voz no palco.</p>
-                </div>
+        <section class="feature-strip" aria-label="Frentes de atuação">
+            <article class="feature-item reveal">
+                <span class="feature-number">01</span>
+                <i class="fas fa-theater-masks" aria-hidden="true"></i>
+                <h2>Espetáculos</h2>
+                <p>Montagens que conectam emoção, identidade e histórias do nosso cotidiano.</p>
             </article>
-
-            <article class="post-card reveal">
-                <img src="css/img/post_3.png" alt="Ensaio Aberto" class="post-img">
-                <div class="post-info">
-                    <h3>Ensaio Aberto</h3>
-                    <p>Um espaço para mostrar processo, trocar ideias e aproximar o público da arte teatral.</p>
-                </div>
+            <article class="feature-item reveal">
+                <span class="feature-number">02</span>
+                <i class="fas fa-chalkboard-teacher" aria-hidden="true"></i>
+                <h2>Formação</h2>
+                <p>Vivências e oficinas para experimentar, aprender e encontrar a própria voz.</p>
             </article>
-
-            <article class="post-card reveal">
-                <img src="css/img/post_4.png" alt="Novo Espetáculo" class="post-img">
-                <div class="post-info">
-                    <h3>Deu a Louca em Mainha</h3>
-                    <p>Uma família de periferia vive um domingo caótico entre gritos, celular e churrasco; no fim, prova que bagunça e amor caminham juntos.</p>
-                </div>
+            <article class="feature-item reveal">
+                <span class="feature-number">03</span>
+                <i class="fas fa-hands-helping" aria-hidden="true"></i>
+                <h2>Encontro</h2>
+                <p>Um espaço de troca que aproxima artistas, público e comunidade pela arte.</p>
             </article>
+        </section>
+
+        <section class="section-container about-section" id="sobre">
+            <div class="about-copy reveal">
+                <p class="section-eyebrow">Muito além da cena</p>
+                <h2 class="section-title">A arte acontece quando todo mundo pode participar.</h2>
+                <p class="section-intro">A Nova Geração em Cena acredita no teatro como lugar de expressão, pertencimento e transformação. Criamos juntos — do primeiro ensaio ao encontro com a plateia.</p>
+                <a href="sobre/sobre.html" class="text-link">Saiba mais sobre nós <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            </div>
+            <div class="about-art reveal">
+                <img src="css/img/post_2.png" alt="Participantes reunidos em uma atividade de teatro" loading="lazy">
+                <div class="about-stamp"><i class="fas fa-star" aria-hidden="true"></i><span>Vozes novas.<br>Histórias vivas.</span></div>
+            </div>
+        </section>
+
+        <section class="work-section" id="trabalhos">
+            <div class="section-container">
+                <div class="section-heading">
+                    <p class="section-eyebrow">Dentro e fora do palco</p>
+                    <h2 class="section-title">Cada processo também conta uma história.</h2>
+                    <p class="section-intro">Conheça algumas das experiências que fazem parte do universo NGC.</p>
+                </div>
+
+                <div class="grid-posts">
+                    <article class="post-card reveal">
+                        <img src="css/img/post_2.png" alt="Atividade de oficina teatral" class="post-img" loading="lazy">
+                        <div class="post-info">
+                            <span class="card-label">Aprender fazendo</span>
+                            <h3>Oficina de teatro</h3>
+                            <p>Jogos, experimentação e criação coletiva para descobrir novas formas de se expressar.</p>
+                        </div>
+                    </article>
+                    <article class="post-card reveal">
+                        <img src="css/img/post_3.png" alt="Artistas durante um ensaio aberto" class="post-img" loading="lazy">
+                        <div class="post-info">
+                            <span class="card-label">Processo aberto</span>
+                            <h3>Ensaio aberto</h3>
+                            <p>Um convite para acompanhar de perto o processo criativo e trocar ideias com o grupo.</p>
+                        </div>
+                    </article>
+                    <article class="post-card reveal">
+                        <img src="css/img/post_4.png" alt="Cena do espetáculo Deu a Louca em Mainha" class="post-img" loading="lazy">
+                        <div class="post-info">
+                            <span class="card-label">Espetáculo</span>
+                            <h3>Deu a Louca em Mainha</h3>
+                            <p>Um domingo em família vira uma confusão cheia de humor, afeto e reconhecimento.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="event-banner reveal" aria-labelledby="event-title">
+            <div class="event-banner-copy">
+                <p class="section-eyebrow">Vem viver o teatro</p>
+                <h2 id="event-title">O próximo encontro começa com você.</h2>
+                <p>A programação e a disponibilidade de ingressos são confirmadas diretamente com a equipe. Fale com a gente e saiba o que vem por aí.</p>
+                <a href="compra.html" class="btn-principal"><i class="fas fa-ticket-alt" aria-hidden="true"></i> Consultar programação</a>
+            </div>
+            <div class="event-banner-mark" aria-hidden="true"><i class="fas fa-ticket-alt"></i><span>NGC</span></div>
+        </section>
+
+        <section class="section-container faq-section" id="duvidas">
+            <div class="section-heading">
+                <p class="section-eyebrow">Tudo bem perguntar</p>
+                <h2 class="section-title">Dúvidas frequentes</h2>
+            </div>
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary>Como descubro a próxima apresentação?</summary>
+                    <p>A agenda é confirmada com a equipe. Acesse a página de ingressos para consultar a programação atualizada e falar diretamente com a produção.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Como faço para reservar um ingresso?</summary>
+                    <p>Entre em contato pelo WhatsApp na página de ingressos. A equipe confirma disponibilidade, valores e os próximos passos da reserva.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Como posso apoiar o coletivo?</summary>
+                    <p>Você pode contribuir via Pix ou compartilhar nosso trabalho. Acesse a página de apoio para encontrar a chave e as instruções.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Quero participar de uma oficina. Como faço?</summary>
+                    <p>Fale com a equipe para saber sobre as próximas oficinas, vagas e formas de participação.</p>
+                </details>
+            </div>
+        </section>
+
+        <section class="closing-cta">
+            <p class="section-eyebrow">O palco fica melhor com você</p>
+            <h2>Vamos criar esse encontro?</h2>
+            <p>Acompanhe o coletivo, conheça a programação ou ajude a manter a arte em movimento.</p>
+            <div class="hero-actions">
+                <a href="compra.html" class="btn-principal">Ver ingressos <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                <a href="doacao.html" class="btn-secundario">Apoiar o projeto <i class="fas fa-heart" aria-hidden="true"></i></a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+            <a class="logo footer-logo" href="index.html" aria-label="Nova Geração em Cena, início">
+                <img src="css/img/soon.png" alt="">
+                <span class="logo-texto"><strong>N.G.C</strong><small>Nova Geração em Cena</small></span>
+            </a>
+            <p>Histórias vivas. Novas vozes. Um palco para todo mundo.</p>
+            <nav class="footer-links" aria-label="Links do rodapé">
+                <a href="sobre/sobre.html">Nossa história</a>
+                <a href="compra.html">Ingressos</a>
+                <a href="doacao.html">Apoie</a>
+                <a href="https://www.instagram.com/novageracao.encena/" target="_blank" rel="noreferrer">Instagram <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+            </nav>
         </div>
-    </section>
-
-    <footer>
-        <p>© <span id="year"></span> Nova Geração em Cena</p>
+        <div class="footer-bottom">
+            <p>© <span id="year"></span> Nova Geração em Cena. Feito com arte e comunidade.</p>
+            <a href="login.html" class="admin-link">Área administrativa</a>
+        </div>
     </footer>
 
+    <button class="back-to-top" type="button" aria-label="Voltar ao topo"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
     <script src="script.js"></script>
 </body>
 </html>

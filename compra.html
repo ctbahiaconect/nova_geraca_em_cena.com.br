@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="purchase">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header>
         <div class="nav-container">
             <div class="logo">
@@ -23,8 +24,10 @@
             </button>
 
             <nav class="nav-links" aria-label="Menu principal">
-                <a href="index.html">Home</a>
-                <a href="sobre/sobre.html">Sobre Nós</a>
+                <a href="index.html">Início</a>
+                <a href="index.html#sobre">O coletivo</a>
+                <a href="sobre/sobre.html">Nossa história</a>
+                <a href="doacao.html">Apoie</a>
                 <a href="ingresso.html">Certificado</a>
             </nav>
 
@@ -34,47 +37,53 @@
         </div>
     </header>
 
-    <main class="page-shell">
+    <main class="page-shell" id="conteudo">
         <div class="page-hero">
-            <h1>Compra de ingresso</h1>
-            <p>Entre em contato pelo WhatsApp para reservar seu ingresso. Após a confirmação, o administrador cadastra o cliente e o certificado passa a aparecer no site.</p>
+            <p class="section-eyebrow">Seu próximo encontro com o teatro</p>
+            <h1>Programação e ingressos</h1>
+            <p>Consulte as próximas datas e fale diretamente com a produção para verificar disponibilidade e reservar.</p>
         </div>
 
         <section class="purchase-layout">
             <article class="purchase-card">
-                <h2>Próximo espetáculo</h2>
-                <p>Reserve sua presença no próximo show da Nova Geração em Cena.</p>
+                <span class="card-label">Em destaque no repertório</span>
+                <h2>Deu a Louca em Mainha</h2>
+                <p>Uma família de periferia vive um domingo caótico entre gritos, celular e churrasco; no fim, prova que bagunça e amor caminham juntos.</p>
 
                 <div class="purchase-list">
                     <div class="list-item">
-                        <strong>Evento:</strong>
-                        <p>Deu a Louca em Mainha</p>
-                    </div>
-                    <div class="list-item">
-                        <strong>Data:</strong>
-                        <p>20 de outubro de 2026</p>
+                        <strong>Agenda:</strong>
+                        <p>Consulte as próximas datas com a produção.</p>
                     </div>
                     <div class="list-item">
                         <strong>Local:</strong>
-                        <p>Teatro NGC - Centro</p>
+                        <p>Informado pela equipe ao confirmar a sessão.</p>
                     </div>
                 </div>
 
                 <div class="purchase-cta">
-                    <a id="whatsapp-link" class="btn-principal" href="#" target="_blank" rel="noreferrer"><i class="fab fa-whatsapp"></i> Comprar pelo WhatsApp</a>
+                    <a id="whatsapp-link" class="btn-principal" href="#" target="_blank" rel="noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i> Consultar datas e ingressos</a>
+                    <p class="purchase-contact-note"><i class="fas fa-shield-alt" aria-hidden="true"></i> A equipe confirma disponibilidade e orienta você sobre a reserva.</p>
                 </div>
             </article>
 
             <aside class="info-panel">
                 <div class="purchase-card">
                     <h2>Como funciona</h2>
-                    <p>1. Você envia uma mensagem pelo WhatsApp.</p>
-                    <p>2. O administrador confirma a compra.</p>
-                    <p>3. O certificado com o seu nome aparece na página de ingresso.</p>
+                    <p><strong>01.</strong> Você consulta a agenda e envia uma mensagem pelo WhatsApp.</p>
+                    <p><strong>02.</strong> A produção confirma data, local, disponibilidade e os próximos passos.</p>
+                    <p><strong>03.</strong> Depois da confirmação, seu certificado fica disponível na página de ingresso.</p>
                 </div>
             </aside>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-bottom">
+            <p>© <span id="year"></span> Nova Geração em Cena</p>
+            <a href="index.html" class="admin-link">Voltar ao início</a>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>

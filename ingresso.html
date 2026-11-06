@@ -9,30 +9,42 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="ticket">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <header>
         <div class="nav-container">
-            <div class="logo">
-                <img src="css/img/soon.png" alt="Logo Nova Geração em Cena">
-                <div class="logo-texto">
-                    <h1>N.G.C</h1>
-                </div>
-            </div>
-            <nav class="nav-links" aria-label="Menu principal">
-                <a href="index.html">Home</a>
-                <a href="compra.html">Comprar</a>
+            <a class="logo" href="index.html" aria-label="Nova Geração em Cena, página inicial">
+                <img src="css/img/soon.png" alt="">
+                <span class="logo-texto"><strong>N.G.C</strong><small>Nova Geração em Cena</small></span>
+            </a>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-principal" type="button">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+
+            <nav class="nav-links" id="menu-principal" aria-label="Menu principal">
+                <a href="index.html">Início</a>
+                <a href="index.html#sobre">O coletivo</a>
+                <a href="compra.html">Ingressos</a>
                 <a href="ingresso.html" class="active">Certificado</a>
             </nav>
+            <a href="doacao.html" class="header-cta"><i class="fas fa-heart" aria-hidden="true"></i> Apoie</a>
         </div>
     </header>
 
-    <main class="page-shell">
+    <main class="page-shell" id="conteudo">
         <div class="page-hero">
             <h1>Certificado do ingresso</h1>
-            <p>Confira aqui o ingresso liberado para o cliente.</p>
+            <p>Consulte os dados do certificado usando o código compartilhado pela produção.</p>
         </div>
 
         <section id="certificate-content"></section>
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-bottom">
+            <p>© <span id="year"></span> Nova Geração em Cena</p>
+            <a href="index.html" class="admin-link">Voltar ao início</a>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
